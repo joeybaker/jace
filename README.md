@@ -1,65 +1,59 @@
-# Visible Element
+# JACE
 
-[![NPM](https://nodei.co/npm/visible-element.png)](https://nodei.co/npm/visible-element/) [![Build Status](https://travis-ci.org/joeybaker/visible-element.png?branch=master)](https://travis-ci.org/joeybaker/visible-element)
+[![NPM](https://nodei.co/npm/jace.png)](https://nodei.co/npm/jace/) [![Build Status](https://travis-ci.org/joeybaker/jace.png?branch=master)](https://travis-ci.org/joeybaker/jace)
 
-For browsers only. Has two methods that allow you to detect if an element is visible to the user.
+JSON Ampersand Configuration by Environment State. Node project configuration. (Also, it sounds like brace, which is used to support a whole project)
 
-_NOTE: a DOM library (like jQuery) is required for one of the methods_
+Jace is a configuration library for a node project that recognizes several levels of overrides.
+
+The order of preference, higher numbers override lower numbers
+
+1. default.json
+2. {env}.json // env is determined by the `NODE_ENV` bash variable, or by the `env` option.
+3. bash env vars, converted to nested objects.
+4. options object
+
+Every level merges and overrides the previous.
 
 ## Install
-`npm install visible-element`
+`npm i -S jace`
 
 ## Usage
 ```js
-var $ = require('jquery')
-  , visible = require('visible-element')($)
+var jace = require('jace')
+  , options = {
+    db: {
+      user: 'me'
+    }
+    , users: 0
+    // defaults to './config'
+    , configPath: __dirname
+  }
+  , config = jace(options)
 
-visible.inViewport($('#visible')) // → true
-visible.inViewport($('#hidden')) // → false
+// config is an ampersand-state object
+config.env // will be the value of process.env.NODE_ENV if set, else 'default'
+config.db.user // 'me'
 
-// requires a DOM library
-// the parent arg is optional, it'll default to $el.parent()
-// this method is useful for parents that have `overflow: scroll`
-visible.inContainer($('#visible'), $('#parent')) // → true
-visible.inContainer($('#hidden'), $('#parent')) // → true
+// …
+
+function onUserRegistration(){
+  config.users++
+}
+
+config.on('change:users', console.log.bind(console, 'added a user'))
 ```
 
-## Methods
+### Setting env vars
+Bash environmental variables are set with `export MY_VAR=rabbit`. Jace converts snake case (underscore separated) env vars into nested objects.
 
-### Initialization
-The library must first be initialized before use.
+`MY_RABBIT=fluffy` becomes `{my: {rabbit: 'fluffy'}}`
 
-```js
-var visibleElement = require('visible-element')
-  , visible = visibleElement()
+`MY_RABBIT=fluffy; MY_BUNNY=cottontail` becomes `{my: {rabbit: 'fluffy', bunny: 'cottontail'}}`
 
-visible.inViewport(document.getElementById('my-element'))
-```
-
-Or, you can initialize with a DOM library (like jQuery).
-
-```js
-var visibleElement = require('visible-element')
-  , $ = require('jquery')
-  , visible = visibleElement($)
-
-visible.inViewport($('my-element'))
-// you can then also use
-visible.inContainer($('my-element'), $('my-scrolling-container'))
-```
-
-
-### `inViewport(<DOMNode || jqueryEl> el)`
-Checks if the element is visible in the entire viewport. Returns a boolean. Accepts a jQuery-style wrapped DOM element or a raw element.
-
-Does not require a DOM library.
-
-### `inContainer(<jqueryEl> el[, <jqueryEl> parent])`
-Checks if an element is visible in a container. This is especially useful if the parent has `overflow: hidden` or `overflow: scroll` on it.
-
-Returns a boolean. Accepts an element as the first argument. An optional second argument defines the parent container. If not passed, it will default to the immediate parent of the element.
-
-Requires initialization with a DOM library.
+## Options
+### `configPath`
+Where should we look for `default.json` and other config files? Defaults to `./config`.
 
 ## Tests
 Tests are [prova](https://github.com/azer/prova), based on [tape](https://github.com/substack/tape). They can be run with `npm test`.
