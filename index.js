@@ -20,6 +20,7 @@ internals.Config = State.extend({
   }
   , session: {
     configPath: ['string', true, path.join(cwd, 'config')]
+    , allEnv: ['boolean', true, false]
   }
   , derived: {
     env: {
@@ -34,16 +35,29 @@ internals.Config = State.extend({
   }
 })
 
+internals.parseEnvVarValue = function parseEnvVarValue(value){
+  var parsedValue
+
+  // parse out boolean values
+  if (value.toLowerCase() === 'true')
+    parsedValue = true
+  else if (value.toLowerCase() === 'false')
+    parsedValue = false
+  else parsedValue = value
+
+  return parsedValue
+}
+
 internals.reduceDefaultKeys = function reduceDefaultKeys(out, key){
   // nested keys are expected to be underscore separated as env vars
   // e.g. {couch: {url: 'localhost'}} → COUCH_URL = localhost
-  var envVar = snakeize(key.replace('.', '_')).toUpperCase()
+  var envVar = snakeize(key.replace(/\./g, '_')).toUpperCase()
     , envVarValue = process.env[envVar]
     , newValueObject = {}
 
   // if the env var is set, unflatten the key and merge it in
   if (envVarValue) {
-    newValueObject[key] = envVarValue
+    newValueObject[key] = internals.parseEnvVarValue(envVarValue)
 
     out = _.merge(out, unflatten(newValueObject))
   }
@@ -51,10 +65,21 @@ internals.reduceDefaultKeys = function reduceDefaultKeys(out, key){
   return out
 }
 
+internals.envToObject = function envToObject(env){
+  return _.reduce(env, function reduceEnvObject(out, value, key){
+    var newObject = {}
+
+    newObject[key.toLowerCase().replace(/_/g, '.')] = internals.parseEnvVarValue(value)
+
+    return _.merge(out, unflatten(newObject))
+  }, {})
+}
+
 module.exports = function initConfig(options){
-  var config = new internals.Config()
+  var config = new internals.Config(options)
     , defaultConfigPath = path.join(config.configPath, 'default.json')
     , envConfigPath = path.join(config.configPath, config.env + '.json')
+    , envKeys
 
   // sync methods are ok b/c we're starting up
   internals.defaultConfig = fs.existsSync(defaultConfigPath)
@@ -77,8 +102,11 @@ module.exports = function initConfig(options){
 
   // get the env vars
   // flatten the keys so can can get all the nested keys
-  internals.envVars = Object.keys(flatten(_.extend(config.toJSON(), options)))
-    .reduce(internals.reduceDefaultKeys, {})
+  if (config.allEnv) internals.envVars = internals.envToObject(process.env)
+  else {
+    envKeys = Object.keys(flatten(_.extend(config.toJSON(), options)))
+    internals.envVars = envKeys.reduce(internals.reduceDefaultKeys, {})
+  }
 
   config.set(internals.envVars, {silient: true})
 

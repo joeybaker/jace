@@ -55,6 +55,11 @@ Bash environmental variables are set with `export MY_VAR=rabbit`. Jace converts 
 ### `configPath`
 Where should we look for `default.json` and other config files? Defaults to `./config`.
 
+### `allEnv`
+Defaults to `false`. If `true`, will pull in all env vars, not just the ones defined in a JSON config file or the options.
+
+NOTE: most systems have many irrelvant env vars. It's easy to pollute your config with uncessary properties if you turn this on.
+
 ## Tests
 Tests are [prova](https://github.com/azer/prova), based on [tape](https://github.com/substack/tape). They can be run with `npm test`.
 
