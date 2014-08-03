@@ -52,10 +52,10 @@ Bash environmental variables are set with `export MY_VAR=rabbit`. Jace converts 
 `MY_RABBIT=fluffy; MY_BUNNY=cottontail` becomes `{my: {rabbit: 'fluffy', bunny: 'cottontail'}}`
 
 ## Options
-### `configPath`
+### `<String> configPath`
 Where should we look for `default.json` and other config files? Defaults to `./config`.
 
-### `allEnv`
+### `<Boolean> allEnv`
 Defaults to `false`. If `true`, will pull in all env vars, not just the ones defined in a JSON config file or the options.
 
 NOTE: most systems have many irrelvant env vars. It's easy to pollute your config with uncessary properties if you turn this on.
