@@ -6,7 +6,7 @@ JSON Ampersand Configuration by Environment State. Node project configuration. (
 
 Jace is a configuration library for a node project that recognizes several levels of overrides.
 
-The order of preference, higher numbers override lower numbers
+The order of preference, higher numbers override lower numbers.
 
 1. default.json
 2. {env}.json // env is determined by the `NODE_ENV` bash variable, or by the `env` option.
