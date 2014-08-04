@@ -4,7 +4,7 @@
 
 JSON Ampersand Configuration by Environment State. Node project configuration. (Also, it sounds like brace, which is used to support a whole project)
 
-Jace is a configuration library for a node project that recognizes several levels of overrides.
+Jace is a configuration library for a node project that recognizes several levels of overrides. [ALCE](https://github.com/walmartlabs/ALCE) is used for JSON parsing so your JSON can have comments.
 
 The order of preference, higher numbers override lower numbers.
 

@@ -84,11 +84,11 @@ module.exports = function initConfig(options){
 
   // sync methods are ok b/c we're starting up
   internals.defaultConfig = fs.existsSync(defaultConfigPath)
-    ? ALCE.parse(fs.readFileSync(defaultConfigPath, {encoding: 'utf8'})).toObject()
+    ? ALCE.parse(fs.readFileSync(defaultConfigPath, {encoding: 'utf8'}))
     : internals.defaultConfig
 
   internals.envConfig = fs.existsSync(envConfigPath)
-    ? ALCE.parse(fs.readFileSync(envConfigPath, {encoding: 'utf8'})).toObject()
+    ? ALCE.parse(fs.readFileSync(envConfigPath, {encoding: 'utf8'}))
     : internals.envConfig
 
   // order of preference, higher numbers override lower numbers

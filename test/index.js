@@ -82,3 +82,25 @@ test('jace#internals.envToObject', function(t){
 
   t.end()
 })
+
+test('jace integration', function(t){
+  var config
+
+  config = jace({
+    configPath: __dirname + '/fixtures/'
+    , env: 'test'
+  })
+
+  t.ok(
+    config.hi
+    , 'reads default.json'
+  )
+
+  t.equal(
+    config.good
+    , 'day'
+    , 'overrides the defaults with the env json'
+  )
+
+  t.end()
+})
