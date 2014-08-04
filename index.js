@@ -4,6 +4,7 @@ var State = require('ampersand-state')
   , snakeize = require('snake-case')
   , flat  = require('flat')
   , fs = require('fs')
+  , ALCE = require('alce')
   , flatten = flat.flatten
   , unflatten = flat.unflatten
   , cwd = process.cwd()
@@ -83,11 +84,11 @@ module.exports = function initConfig(options){
 
   // sync methods are ok b/c we're starting up
   internals.defaultConfig = fs.existsSync(defaultConfigPath)
-    ? JSON.parse(fs.readFileSync(defaultConfigPath, {encoding: 'utf8'}))
+    ? ALCE.parse(fs.readFileSync(defaultConfigPath, {encoding: 'utf8'})).toObject()
     : internals.defaultConfig
 
   internals.envConfig = fs.existsSync(envConfigPath)
-    ? JSON.parse(fs.readFileSync(envConfigPath, {encoding: 'utf8'}))
+    ? ALCE.parse(fs.readFileSync(envConfigPath, {encoding: 'utf8'})).toObject()
     : internals.envConfig
 
   // order of preference, higher numbers override lower numbers
