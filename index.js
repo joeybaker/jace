@@ -27,7 +27,7 @@ internals.Config = State.extend({
     env: {
       deps: ['nodeEnv']
       , fn: function deriveNodeEnv(){
-        return this.nodEnv
+        return this.nodeEnv
       }
     }
   }

@@ -83,6 +83,23 @@ test('jace#internals.envToObject', function(t){
   t.end()
 })
 
+test('jace derives env from nodeEnv', function(t){
+  var config = {}
+    , env = 'testenv'
+
+  process.env.NODE_ENV = env
+  config = jace()
+
+  t.equal(
+    config.env
+    , env
+  )
+
+  // cleanup
+  process.env = _env
+  t.end()
+})
+
 test('jace integration', function(t){
   var config
 
