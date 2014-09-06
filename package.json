@@ -1,6 +1,6 @@
 {
   "name": "jace",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "JSON Ampersand Configuration by Environment State. Node project configuration. (Also, it sounds like brace, which is used to support a whole project)",
   "main": "index.js",
   "scripts": {
