@@ -1,8 +1,8 @@
 var test = require('prova')
   , jace = require('../index.js')
   , _ = require('lodash')
-  , State = require('ampersand-state')
   , _env = _.cloneDeep(process.env)
+  , path = require('path')
 
 test('jace', function(t){
   var newEnv = 'testing'
@@ -10,8 +10,8 @@ test('jace', function(t){
     , config = jace()
 
   t.ok(
-    config instanceof State
-    , 'returns a instance of ampersand-state'
+    _.isPlainObject(config)
+    , 'returns an object'
   )
 
   t.equal(
@@ -104,7 +104,7 @@ test('jace integration', function(t){
   var config
 
   config = jace({
-    configPath: __dirname + '/fixtures/'
+    configPath: path.join(__dirname, 'fixtures')
     , env: 'test'
   })
 

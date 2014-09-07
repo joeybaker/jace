@@ -1,5 +1,4 @@
-var State = require('ampersand-state')
-  , _ = require('lodash')
+var _ = require('lodash')
   , path = require('path')
   , snakeize = require('snake-case')
   , flat  = require('flat')
@@ -13,28 +12,6 @@ var State = require('ampersand-state')
     , envConfig: {}
     , envVars: {}
   }
-
-internals.Config = State.extend({
-  extraProperties: 'allow'
-  , props: {
-    nodeEnv: ['string', true, 'default']
-  }
-  , session: {
-    configPath: ['string', true, path.join(cwd, 'config')]
-    , allEnv: ['boolean', true, false]
-  }
-  , derived: {
-    env: {
-      deps: ['nodeEnv']
-      , fn: function deriveNodeEnv(){
-        return this.nodeEnv
-      }
-    }
-  }
-  , toJSON: function toJSON(){
-    return _.extend(this.serialize(), this.getAttributes({derived: true}))
-  }
-})
 
 internals.parseEnvVarValue = function parseEnvVarValue(value){
   var parsedValue
@@ -76,10 +53,16 @@ internals.envToObject = function envToObject(env){
   }, {})
 }
 
-module.exports = function initConfig(options){
-  var config = new internals.Config(options)
-    , defaultConfigPath = path.join(config.configPath, 'default.json')
-    , envConfigPath = path.join(config.configPath, config.env + '.json')
+internals.init = function initConfig(options){
+  var config = _.merge({
+      nodeEnv: process.env.NODE_ENV
+      , env: process.env.NODE_ENV
+    }, options)
+    , configPath = _.isObject(options) && options.configPath
+      ? options.configPath
+      : cwd
+    , defaultConfigPath = path.join(configPath, 'default.json')
+    , envConfigPath = path.join(configPath, config.env + '.json')
     , envKeys
 
   // sync methods are ok b/c we're starting up
@@ -97,23 +80,21 @@ module.exports = function initConfig(options){
   // 3. env vars
   // 4. options
 
-  // silient b/c this is inital configuration
-  config.set(internals.defaultConfig, {silent: true})
-  config.set(internals.envConfig, {silent: true})
+  _.merge(config, internals.defaultConfig, internals.envConfig, options)
 
   // get the env vars
-  // flatten the keys so can can get all the nested keys
   if (config.allEnv) internals.envVars = internals.envToObject(process.env)
   else {
-    envKeys = Object.keys(flatten(_.extend(config.toJSON(), options)))
+  // flatten the keys so can can get all the nested keys
+    envKeys = Object.keys(flatten(_.extend(config, options)))
     internals.envVars = envKeys.reduce(internals.reduceDefaultKeys, {})
   }
 
-  config.set(internals.envVars, {silient: true})
-
-  config.set(options, {silent: true})
+  _.merge(config, internals.envVars)
 
   return config
 }
 
+module.exports = internals.init
+module.exports.init = internals.init
 module.exports.internals = internals

@@ -27,7 +27,6 @@
   "homepage": "https://github.com/joeybaker/jace",
   "dependencies": {
     "alce": "^1.0.0",
-    "ampersand-state": "^4.3.7",
     "flat": "^1.2.1",
     "lodash": "^2.4.1",
     "snake-case": "^0.1.1"

@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/jace.png)](https://nodei.co/npm/jace/) [![Build Status](https://travis-ci.org/joeybaker/jace.png?branch=master)](https://travis-ci.org/joeybaker/jace)
 
-JSON Ampersand Configuration by Environment State. Node project configuration. (Also, it sounds like brace, which is used to support a whole project)
+Node project configuration. Jace sounds like brace. Braces support things. Jace supports the whole project.
 
 Jace is a configuration library for a node project that recognizes several levels of overrides. [ALCE](https://github.com/walmartlabs/ALCE) is used for JSON parsing so your JSON can have comments.
 
@@ -34,14 +34,6 @@ var jace = require('jace')
 // config is an ampersand-state object
 config.env // will be the value of process.env.NODE_ENV if set, else 'default'
 config.db.user // 'me'
-
-// …
-
-function onUserRegistration(){
-  config.users++
-}
-
-config.on('change:users', console.log.bind(console, 'added a user'))
 ```
 
 ### Setting env vars
@@ -67,5 +59,8 @@ Tests are [prova](https://github.com/azer/prova), based on [tape](https://github
 To publish, run `gulp publish --bump=patch`
 
 ## Changelog
+### 2.0.0
+No longer uses ampersand-state for base config. It turned out too be too brittle and really, config should only be set once.
+
 ### 1.0.0
 Initial Release
